@@ -1,22 +1,65 @@
 package com.example.springbootjava.student;
 
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
+
+    private final StudentRepository studentRepository;
+
+    @Autowired
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
     public List<Student> getStudent() {
-        return List.of(
-                new Student(
-                         1L,
-                        "tuananh",
-                        "tuananh@com.vn",
-                        LocalDate.of(2000, Month.FEBRUARY,5),
-                        32
-                )
+        return studentRepository.findAll();
+    }
+
+    public void addNewStudent(Student student) throws IllegalAccessException {
+        Optional<Student> studentByEmail = studentRepository.findStudentByEmail(student.getEmail());
+
+        if (studentByEmail.isPresent()) {
+            throw new IllegalAccessException("email taken");
+        }
+
+        studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long studentID) {
+        boolean existStudentId = studentRepository.existsById(studentID);
+        if (!existStudentId) {
+            throw new IllegalStateException(
+                    "student with id " + studentID + "does not exists"
+            );
+        }
+        studentRepository.deleteById(studentID);
+    }
+
+    @Transactional
+    public void updateStudent(Long studentID, String name, String email) {
+        Student student = studentRepository.findById(studentID).orElseThrow(() ->
+            new IllegalStateException(
+                    "student with id " + studentID + "does not exists"
+            )
         );
+
+        if (name != null && name.length() > 0) {
+            student.setName(name);
+        }
+
+        if (email != null && email.length() > 0) {
+            Optional<Student> studentByEmail = studentRepository.findStudentByEmail(email);
+            if (studentByEmail.isPresent()) {
+                throw new IllegalStateException("email taken");
+            }
+
+            student.setEmail(email);
+        }
     }
 }
