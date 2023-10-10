@@ -33,7 +33,7 @@ public class Auth implements UserDetails {
 
 
     private Long id;
-    private String name;
+    private String firstname;
     private String username;
 
     private String email;
@@ -42,18 +42,16 @@ public class Auth implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
 
-    private Boolean locked;
+    private Boolean locked = false;
 
-    private Boolean enabled;
+    private Boolean enabled = true;
 
-    public Auth(String name, String username, String email, String password, AppUserRole appUserRole, Boolean locked, Boolean enabled) {
-        this.name = name;
+    public Auth(String firstname, String username, String email, String password, AppUserRole appUserRole) {
+        this.firstname = firstname;
         this.username = username;
         this.email = email;
         this.password = password;
         this.appUserRole = appUserRole;
-        this.locked = locked;
-        this.enabled = enabled;
     }
 
     @Override
@@ -64,7 +62,7 @@ public class Auth implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
