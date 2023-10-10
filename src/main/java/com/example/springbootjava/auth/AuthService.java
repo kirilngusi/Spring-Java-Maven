@@ -1,11 +1,16 @@
 package com.example.springbootjava.auth;
 
+import com.example.springbootjava.registration.token.ConfirmationToken;
+import com.example.springbootjava.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -16,6 +21,7 @@ public class AuthService implements UserDetailsService {
             "user with email %s not found";
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -42,9 +48,20 @@ public class AuthService implements UserDetailsService {
 
         authRepository.save(auth);
 
+        String token = UUID.randomUUID().toString();
         //TODO: SEND CONFIRMATION TOKEN
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                auth
+        );
 
+        confirmationTokenService.saveConfirmationToken(
+                confirmationToken
+        );
 
-        return "Here";
+        //TODO: SEND EMAIL
+        return token;
     }
 }
