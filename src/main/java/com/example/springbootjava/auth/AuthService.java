@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 @AllArgsConstructor
 public class AuthService implements UserDetailsService {
@@ -22,6 +25,7 @@ public class AuthService implements UserDetailsService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
+    protected static final Logger logger = LogManager.getLogger();
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -37,6 +41,7 @@ public class AuthService implements UserDetailsService {
         boolean userExists =  authRepository.findByEmail(auth.getEmail()).isPresent();
 
         if (userExists) {
+            logger.info("Hello World!");
             throw new IllegalStateException("Email Is Already Taken");
         }
 
