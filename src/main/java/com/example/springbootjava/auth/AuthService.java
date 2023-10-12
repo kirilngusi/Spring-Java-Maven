@@ -69,4 +69,8 @@ public class AuthService implements UserDetailsService {
         //TODO: SEND EMAIL
         return token;
     }
+
+    public int enableAppUser(String email) {
+        return authRepository.enableAppUser(email);
+    }
 }
