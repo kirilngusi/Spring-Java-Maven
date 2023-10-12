@@ -10,3 +10,9 @@ services:
       - ./postgres:/data/postgres
     ports:
       - "8081:5432"
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
