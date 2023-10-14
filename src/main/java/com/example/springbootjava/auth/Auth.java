@@ -17,6 +17,8 @@ import java.util.Collections;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Entity
+//@Table(name = "auth")
+
 public class Auth implements UserDetails {
 
     @Id
@@ -67,7 +69,7 @@ public class Auth implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override
